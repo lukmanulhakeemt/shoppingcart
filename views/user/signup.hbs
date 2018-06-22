@@ -10,6 +10,12 @@
             </div>
         {{/if}}
 
+
+          <div id="mseg">
+            <span id="errmsg"></span>
+          </div>
+
+
         <form action="/user/signup" method="post">
             <div class="form-group">
                 <label for="name">Name</label>
@@ -34,8 +40,21 @@
             <input type="hidden" name="_csrf" value="{{ csrfToken }}">
             </br>
 
-            <button type="submit" class="btn btn-primary">Signup</button>
+            <button type="submit" class="btn btn-primary" onClick='return Validate()'>Signup</button>
         </form>
 
     </div>
 </div>
+
+<script type="text/javascript">
+    function Validate() {
+        var password = document.getElementById("password").value;
+        var confirmPassword = document.getElementById("password2").value;
+        if (password != confirmPassword) {
+          document.getElementById('errmsg').innerHTML = 'Passwords do not match';
+          document.getElementById('mseg').className = 'alert alert-danger';
+            return false;
+        }
+        return true;
+    }
+</script>

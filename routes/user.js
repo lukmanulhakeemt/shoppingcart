@@ -9,82 +9,11 @@ var User = require('../models/user');
 
 var csrfProtection = csrf();
 
-router.post('/removeUser', function(req, res, next) {
-  User.findOneAndRemove({ email: req.user.email }, function(err, success) {
-    if (err) {
-      console.log(err.message);
-      req.flash('error', 'Failed to remove user!');
-    }
-    if (success) {
-      req.flash('success', 'User successfully removed!');
-      res.redirect('/');
-    }
-  });
-});
-
 router.use(csrfProtection);
-
-router.get('/profile', isLoggedIn, function(req, res, next) {
-  Order.find(
-    {
-      user: req.user
-    },
-    function(err, orders) {
-      if (err) {
-        return res.write('Error!');
-      }
-      var cart;
-      orders.forEach(function(order) {
-        cart = new Cart(order.cart);
-        order.items = cart.generateArray();
-      });
-      res.render('user/profile', {
-        csrfToken: req.csrfToken(),
-        orders: orders,
-        user: req.user
-      });
-    }
-  );
-});
-
-router.post('/profile', function(req, res, next) {
-  if (req.body.email) {
-    User.findOne(
-      {
-        email: req.body.email
-      },
-      function(err, doc) {
-        if (err) {
-          req.flash('error', 'failed');
-          console.log(err);
-        }
-
-        doc.email = req.body.email;
-        doc.name = req.body.name;
-        doc.state = req.body.state;
-        doc.city = req.body.city;
-
-        doc.save();
-      }
-    );
-  } else {
-    console.log('invalid email');
-  }
-
-  if (req.session.oldUrl) {
-    var oldUrl = req.session.oldUrl;
-    req.session.oldUrl = null;
-    res.redirect(oldUrl);
-  } else {
-    res.redirect('/user/profile');
-  }
-
-  res.end();
-});
 
 router.get('/logout', isLoggedIn, function(req, res, next) {
   req.logout();
-  res.redirect('/');
+  res.redirect('/user/signin');
 });
 
 router.get('/signup', function(req, res, next) {
@@ -108,7 +37,7 @@ router.post(
       req.session.oldUrl = null;
       res.redirect(oldUrl);
     } else {
-      res.redirect('/user/profile');
+      res.redirect('/fastrack');
     }
   }
 );
@@ -134,7 +63,7 @@ router.post(
       req.session.oldUrl = null;
       res.redirect(oldUrl);
     } else {
-      res.redirect('/user/profile');
+      res.redirect('/fastrack');
     }
   }
 );
@@ -149,12 +78,12 @@ function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect('/');
+  res.redirect('/fastrack');
 }
 
 function notLoggedIn(req, res, next) {
   if (!req.isAuthenticated()) {
     return next();
   }
-  res.redirect('/');
+  res.redirect('/user/signin');
 }

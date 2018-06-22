@@ -31,7 +31,6 @@ passport.use(
         .isLength({
           min: 4
         });
-
       var errors = req.validationErrors();
       if (errors) {
         var messages = [];
@@ -55,8 +54,6 @@ passport.use(
           }
           var newUser = new User();
           newUser.name = req.body.name;
-          newUser.city = req.body.city;
-          newUser.state = req.body.state;
           newUser.email = email;
           newUser.password = newUser.encryptPassword(password);
           newUser.save(function(err, result) {
